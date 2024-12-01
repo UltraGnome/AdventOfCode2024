@@ -94,21 +94,21 @@ func SumMapIf[T comparable](s map[T]int, predicate func(T) bool) int {
 	return t
 }
 
-func Pow[N Number, M Int](x N, y M) N {
-	if y < 0 {
-		return 1 / Pow(x, -y)
-	}
-
-	result := N(1)
-	for y > 0 {
-		if y&1 == 1 {
-			result *= x
-		}
-		y >>= 1
-		x *= x
-	}
-	return result
-}
+//func Pow[N Number, M Int](x N, y M) N {
+//	if y < 0 {
+//		return 1 / Pow(x, -y)
+//	}
+//
+//	result := N(1)
+//	for y > 0 {
+//		if y&1 == 1 {
+//			result *= x
+//		}
+//		y >>= 1
+//		x *= x
+//	}
+//	return result
+//}
 
 func GCD[T Int](a, b T) T {
 	for b != 0 {

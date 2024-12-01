@@ -3,8 +3,10 @@ package main
 import (
 	"embed"
 	_ "embed"
+	"fmt"
+	"strconv"
+	"strings"
 
-	"github.com/UltraGnome/AdventOfCode2024/pkg/chars"
 	"github.com/UltraGnome/AdventOfCode2024/pkg/harness"
 	"github.com/UltraGnome/AdventOfCode2024/pkg/utils"
 )
@@ -17,59 +19,50 @@ var tests embed.FS
 
 func main() {
 	h := harness.New(solve, input, tests)
-	h.Expect(2, 281)
+	//h.Expect(1, 31)
 	h.Solve()
 }
 
-func solve(input string) int {
+func solve(input string) int64 {
 	s := utils.ParseInput(input)
 
-	words := []string{"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"}
+	left := []int64{}
+	right := []int64{}
 
-	total := 0
+	var total int64 = 0
 	for _, line := range s {
-		firstDigit := -1
-		lastDigit := 0
-
-		for i, char := range line {
-			var dig int
-
-			found := false
-			if chars.IsNum(char) {
-				dig = chars.NumVal(char)
-				found = true
-			}
-			if !found {
-				dig, found = checkWords(line, i, words)
-			}
-			if !found {
-				continue
-			}
-
-			if firstDigit == -1 {
-				firstDigit = dig
-			}
-			lastDigit = dig
+		pair := strings.Split(line, "   ")
+		n, err := strconv.Atoi(pair[0])
+		if err == nil {
 		}
+		left = append(left, int64(n))
 
-		total += (firstDigit * 10) + lastDigit
+		m, e := strconv.Atoi(pair[1])
+		if e == nil {
+		}
+		right = append(right, int64(m))
 	}
+	//sort.Slice(left, func(i, j int) bool { return left[i] < left[j] })
+
+	//sort.Slice(right, func(i, j int) bool { return right[i] < right[j] })
+
+	itemCountmap := map[int64]int64{}
+
+	for _, nums := range left {
+		itemCountmap[nums] = 0
+	}
+	for _, num := range right {
+		if _, ok := itemCountmap[num]; ok {
+			itemCountmap[num]++
+		}
+	}
+	for key, v := range itemCountmap {
+
+		total = total + (key * v)
+
+	}
+
+	fmt.Println(total)
 
 	return total
-}
-
-func checkWords(line string, i int, words []string) (int, bool) {
-	for j, word := range words {
-		if checkWord(line, i, word) {
-			return j, true
-		}
-	}
-	return 0, false
-}
-
-func checkWord(line string, i int, word string) bool {
-	if i+len(word) > len(line) {
-		return false
-	}
-	return line[i:i+len(word)] == word
 }
