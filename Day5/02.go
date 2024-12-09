@@ -7,6 +7,7 @@ import (
 	"log"
 	"os"
 	"slices"
+	"sort"
 	"strings"
 )
 
@@ -24,27 +25,47 @@ func main() {
 	var intPages [][]int
 
 	intPages = readInput(scanner, rules)
-
 	for _, pgSet := range intPages {
-		isCompliant := true
 
-		for i, pg := range pgSet {
-			for j := i + 1; j < len(pgSet); j++ {
-				// If there exists a later value that the current value depends
-				// on, this is invalid as it needs to be to the left.
-				if slices.Contains(rules[pg], pgSet[j]) {
-					isCompliant = false
-				}
-			}
-		}
-		if isCompliant {
-			targetIndex := len(pgSet) / 2
-			total += pgSet[targetIndex]
-			//fmt.Println(pgSet[targetIndex])
+		if !isCompliant(pgSet, rules) {
+			sortUpdate(&pgSet, rules)
+			total += pgSet[len(pgSet)/2]
+			continue
 		}
 	}
 
 	fmt.Println(total)
+}
+
+func isCompliant(pgSet []int, rules map[int][]int) bool {
+	result := true
+
+	for i, pg := range pgSet {
+		for j := i + 1; j < len(pgSet); j++ {
+			// If there exists a later value that the current value depends
+			// on, this is invalid as it needs to be to the left.
+			if slices.Contains(rules[pg], pgSet[j]) {
+				result = false
+			}
+		}
+	}
+	return result
+}
+
+func sortUpdate(update *[]int, rules map[int][]int) {
+	sort.Slice(*update, func(i, j int) bool {
+		n1 := (*update)[i]
+		n2 := (*update)[j]
+		rules1, exists := (rules)[n1]
+		if exists && slices.Contains(rules1, n2) {
+			return true
+		}
+		rules2, exists := (rules)[n2]
+		if exists && slices.Contains(rules2, n1) {
+			return false
+		}
+		return true
+	})
 }
 
 func readInput(scanner *bufio.Scanner, rules map[int][]int) [][]int {
