@@ -1,1 +1,0 @@
-https://github.com/pablo-penovi/advent-of-code-2024/blob/main/d5/d5.go
